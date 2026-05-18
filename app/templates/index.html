@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calories Burn Prediction | AI Fitness</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Poppins & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0B1120, #030712);
+            position: relative;
+        }
+
+        /* animated orbs / glowing blobs */
+        .orb-1, .orb-2, .orb-3 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.7;
+            animation: float 18s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #FF3366;
+            top: -150px;
+            left: -120px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: #A855F7;
+            bottom: -120px;
+            right: -100px;
+            animation-delay: 4s;
+        }
+
+        .orb-3 {
+            width: 280px;
+            height: 280px;
+            background: #3B82F6;
+            top: 40%;
+            left: 70%;
+            transform: translate(-50%, -50%);
+            animation-delay: 7s;
+            filter: blur(120px);
+            opacity: 0.5;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* glassmorphic card */
+        .glass-card {
+            width: 90%;
+            max-width: 560px;
+            padding: 32px 34px 42px;
+            border-radius: 48px;
+            background: rgba(15, 25, 45, 0.55);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .glass-card:hover {
+            transform: scale(1.01);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* icon ring */
+        .icon-ring {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 18px;
+            background: linear-gradient(145deg, rgba(255, 51, 102, 0.2), rgba(168, 85, 247, 0.2));
+            border-radius: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-ring i {
+            font-size: 48px;
+            background: linear-gradient(135deg, #FF7A9F, #FFB347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #FFFFFF, #E2E8F0, #FFB3C6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .badge-sub {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #A0B3D9;
+            background: rgba(255,255,255,0.05);
+            display: inline-block;
+            width: auto;
+            margin: 0 auto 32px;
+            padding: 6px 18px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.3px;
+        }
+
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .input-group-custom i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #B9C8FF;
+            z-index: 2;
+            opacity: 0.8;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            padding-left: 52px;
+            padding-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: white;
+            transition: all 0.25s;
+            font-family: 'Inter', monospace;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.14);
+            border-color: #FF6B8F;
+            box-shadow: 0 0 12px rgba(255, 107, 143, 0.5);
+        }
+
+        .form-control-custom::placeholder {
+            color: rgba(200, 212, 250, 0.7);
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        /* remove number spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .predict-btn {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 44px;
+            background: linear-gradient(95deg, #FF477E, #FF8C42);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            box-shadow: 0 12px 24px rgba(255, 71, 126, 0.35);
+            cursor: pointer;
+        }
+
+        .predict-btn i {
+            font-size: 1.3rem;
+            transition: transform 0.2s;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(95deg, #FF5F8F, #FFA155);
+            box-shadow: 0 20px 30px rgba(255, 71, 126, 0.5);
+        }
+
+        .predict-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .predict-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* result card with premium vibes */
+        .result-premium {
+            margin-top: 32px;
+            padding: 20px 16px;
+            border-radius: 38px;
+            background: rgba(10, 20, 40, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 200, 210, 0.3);
+            text-align: center;
+            transition: 0.2s;
+            animation: fadeSlideUp 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: #BFD6FF;
+            margin-bottom: 10px;
+        }
+
+        .calorie-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(125deg, #FFD966, #FF8E9E, #FFC3A0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .unit {
+            font-size: 1.3rem;
+            font-weight: 500;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: #E2E8F0;
+        }
+
+        .fire-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 2rem;
+            vertical-align: middle;
+        }
+
+        hr {
+            background: rgba(255,255,255,0.15);
+            margin: 18px 0 0;
+        }
+
+        .micro-note {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #7D8FB3;
+            margin-top: 22px;
+        }
+
+        @media (max-width: 500px) {
+            .glass-card {
+                padding: 24px 20px 32px;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .calorie-number {
+                font-size: 2.5rem;
+            }
+            .icon-ring {
+                width: 70px;
+                height: 70px;
+            }
+            .icon-ring i {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic gradient orbs -->
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+    <div class="orb-3"></div>
+
+    <div class="glass-card">
+        <div class="icon-ring">
+            <i class="fas fa-fire"></i>
+        </div>
+
+        <div class="main-title">
+            Calorie Burn
+        </div>
+        <div style="text-align: center;">
+            <span class="badge-sub">
+                <i class="fas fa-brain" style="margin-right: 6px;"></i> AI Precision Estimator
+            </span>
+        </div>
+
+        <form method="POST" id="predictForm">
+            <div class="input-group-custom">
+                <i class="fas fa-calendar-alt"></i>
+                <input type="number" step="any" class="form-control-custom" name="age" placeholder="Your age (years)" required>
+            </div>
+
+            <div class="input-group-custom">
+                <i class="fas fa-weight-scale"></i>
+                <input type="number" step="any" class="form-control-custom" name="weight" placeholder="Body weight (kg)" required>
+            </div>
+
+            <div class="input-group-custom">
+                <i class="fas fa-stopwatch"></i>
+                <input type="number" step="any" class="form-control-custom" name="duration" placeholder="Workout duration (minutes)" required>
+            </div>
+
+            <button type="submit" class="predict-btn">
+                <span>PREDICT BURN</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        {% if prediction %}
+        <div class="result-premium">
+            <div class="result-label">
+                <i class="fas fa-chart-line"></i> ESTIMATED ENERGY EXPENDITURE
+            </div>
+            <div class="calorie-number">
+                <span class="fire-icon">🔥</span> {{ prediction }} <span class="unit">kcal</span>
+            </div>
+            <hr>
+            <div class="micro-note">
+                <i class="fas fa-dumbbell"></i> Based on intensity model • high accuracy
+            </div>
+        </div>
+        {% else %}
+        <!-- empty state hint: decorative info -->
+        <div style="margin-top: 28px; text-align: center; opacity: 0.6;">
+            <small style="color: #9BAFD8;"><i class="fas fa-chart-simple"></i> Fill your stats & get instant prediction</small>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- tiny extra glow effect via script (no functionality change, just aesthetic) -->
+    <script>
+        // smooth hover / additional glow for buttons - purely aesthetic (keeps functionality 100%)
+        const btns = document.querySelectorAll('.predict-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('mouseenter', (e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+            });
+            btn.addEventListener('mouseleave', (e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+            });
+        });
+
+        // optional: numeric input sanitization (ensures positive numbers but keeps original post behavior)
+        const numInputs = document.querySelectorAll('input[type="number"]');
+        numInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value && parseFloat(this.value) < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
