@@ -4,8 +4,8 @@ import joblib
 
 app = Flask(__name__)
 
-model = joblib.load('../models/model.pkl')
-scaler = joblib.load('../models/scaler.pkl')
+model = joblib.load('models/model.pkl')
+scaler = joblib.load('models/scaler.pkl')
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
